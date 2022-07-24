@@ -634,32 +634,33 @@ def ModifyStats(apet,apet_idx,teams,te=None,te_idx=[],fixed_targets=[]):
     else:
         target = fixed_targets
         possible = [fixed_targets]
-    
-    attack_amount = 0
-    health_amount = 0
-    if "attackAmount" in apet.ability["effect"]:
-        attack_amount = apet.ability["effect"]["attackAmount"]
-    if "healthAmount" in apet.ability["effect"]:
-        health_amount = apet.ability["effect"]["healthAmount"]
-    if "amount" in apet.ability["effect"]:
-        if type(apet.ability["effect"]["amount"]) == dict:
-            if "attackPercent" in apet.ability["effect"]["amount"]:
-                attack_amount = int(apet.attack*apet.ability["effect"]["amount"]["attackPercent"]*0.01)
+        
+    if apet._health > 0:
+        attack_amount = 0
+        health_amount = 0
+        if "attackAmount" in apet.ability["effect"]:
+            attack_amount = apet.ability["effect"]["attackAmount"]
+        if "healthAmount" in apet.ability["effect"]:
+            health_amount = apet.ability["effect"]["healthAmount"]
+        if "amount" in apet.ability["effect"]:
+            if type(apet.ability["effect"]["amount"]) == dict:
+                if "attackPercent" in apet.ability["effect"]["amount"]:
+                    attack_amount = int(apet.attack*apet.ability["effect"]["amount"]["attackPercent"]*0.01)
+                else:
+                    raise Exception()
+        for target_pet in target:
+            if "untilEndOfBattle" in apet.ability["effect"] and apet.ability["effect"]["untilEndOfBattle"] is True:
+                target_pet._until_end_of_battle_attack_buff += attack_amount
+                target_pet._until_end_of_battle_health_buff += health_amount
             else:
-                raise Exception()
-    for target_pet in target:
-        if "untilEndOfBattle" in apet.ability["effect"] and apet.ability["effect"]["untilEndOfBattle"] is True:
-            target_pet._until_end_of_battle_attack_buff += attack_amount
-            target_pet._until_end_of_battle_health_buff += health_amount
-        else:
-            target_pet._attack += attack_amount
-            target_pet._health += health_amount
-        if "includingFuture" in apet.ability["effect"]["target"] and apet.ability["effect"]["target"]["includingFuture"] is True:
-            if (target_pet.shop is not None):
-                target_pet.shop.shop_attack += attack_amount
-                target_pet.shop.shop_health += health_amount
-        target_pet._attack = min([target_pet._attack,50])
-        target_pet._health = min([target_pet._health,50])
+                target_pet._attack += attack_amount
+                target_pet._health += health_amount
+            if "includingFuture" in apet.ability["effect"]["target"] and apet.ability["effect"]["target"]["includingFuture"] is True:
+                if (target_pet.shop is not None):
+                    target_pet.shop.shop_attack += attack_amount
+                    target_pet.shop.shop_health += health_amount
+            target_pet._attack = min([target_pet._attack,50])
+            target_pet._health = min([target_pet._health,50])
     
     return target,possible
 
@@ -1039,31 +1040,36 @@ def TransferStats(apet,apet_idx,teams,te=None,te_idx=[],fixed_targets=[]):
         target = fixed_targets
         possible = [fixed_targets]
         
-    effect = apet.ability["effect"]
-    copy_attack = effect["copyAttack"]
-    copy_health = effect["copyHealth"]
-    percentage = 1
-    if "percentage" in effect:
-        percentage = effect["percentage"]*0.01
-    from_self = effect["from"]["kind"] == "Self"
-    
-    for entry in target:
-        if from_self:
-            #### dodo is only from_self and it is additive, not copy, unlike
-            #### what the database says
-            if copy_attack:
-                entry._attack += max(int(apet.attack*percentage),1)
-            if copy_health:
-                raise Exception("This should not be possible")
-        else:
-            temp_from = get_target(apet,apet_idx,teams,te=te,get_from=True)
-            ### Randomness not needed as outcome will be the same for all pets
-            ###   that have this ability
-            temp_from = temp_from[0][0]
-            if copy_attack:
-                apet._attack = temp_from.attack
-            if copy_health:
-                apet._health = temp_from.health
+    try:
+        effect = apet.ability["effect"]
+        copy_attack = effect["copyAttack"]
+        copy_health = effect["copyHealth"]
+        percentage = 1
+        if "percentage" in effect:
+            percentage = effect["percentage"]*0.01
+        from_self = effect["from"]["kind"] == "Self"
+        
+        for entry in target:
+            if from_self:
+                #### dodo is only from_self and it is additive, not copy, unlike
+                #### what the database says
+                if copy_attack:
+                    entry._attack += max(int(apet.attack*percentage),1)
+                if copy_health:
+                    raise Exception("This should not be possible")
+            else:
+                temp_from = get_target(apet,apet_idx,teams,te=te,get_from=True)
+                ### Randomness not needed as outcome will be the same for all pets
+                ###   that have this ability
+                temp_from = temp_from[0][0]
+                if copy_attack:
+                    apet._attack = temp_from.attack
+                if copy_health:
+                    apet._health = temp_from.health
+    except Exception as e:
+        # TODO: Fix this transfer stat bug, if there is no pet in front
+        print(f">>> transfer stats for pet {apet} exception {e}")
+        pass
     
     return target,possible
 

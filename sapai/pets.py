@@ -49,6 +49,7 @@ class Pet():
         self.override_ability = False
         self.override_ability_dict = {}
         self.tier = data["pets"][name]["tier"]
+        self.image_code = data["pets"][name]["image"]["unicodeCodePoint"]
         
         ### Overall stats that should be brought into a battle
         self._attack = fd["baseAttack"]
@@ -85,14 +86,16 @@ class Pet():
     
     @property
     def attack(self):
-        if self._attack == "none":
+        # TODO: Fix this str bug for attack
+        if self._attack == "none" or str(self._attack):
             return self._attack
         return min(self._attack + self._until_end_of_battle_attack_buff, 50)
     
     
     @property
     def health(self):
-        if self._health == "none":
+        # TODO: Fix this str bug for health
+        if self._health == "none" or str(self._health):
             return self._health
         return min(self._health + self._until_end_of_battle_health_buff, 50)
     
@@ -784,13 +787,13 @@ class Pet():
 
         
     def __repr__(self):
-        return "< {} {}-{} {} {}-{} >".format(
-            self.name, 
+        return "< {} {} {}-{} {} {}-{} >".format(
+            self.image_code, self.name,
             self.attack, self.health,
             self.status, 
             self.level, self.experience)
-        
-        
+
+
     def copy(self):
         copy_pet = Pet(self.name, self.shop,seed_state=self.seed_state)
         for key,value in self.__dict__.items():
@@ -857,8 +860,10 @@ class Pet():
         pet.override_ability_dict = state["override_ability_dict"]
         pet._attack = state["attack"]
         pet._health = state["health"]
-        pet._until_end_of_battle_attack_buff = state["until_end_of_battle_attack_buff"]
-        pet._until_end_of_battle_health_buff = state["until_end_of_battle_health_buff"]
+        if "until_end_of_battle_attack_buff" in state:
+            pet._until_end_of_battle_attack_buff = state["until_end_of_battle_attack_buff"]
+        if "until_end_of_battle_health_buff" in state:
+            pet._until_end_of_battle_health_buff = state["until_end_of_battle_health_buff"]
         pet.status = state["status"]
         pet.level = state["level"]
         pet.experience = state["experience"]
@@ -926,13 +931,20 @@ def tiger_func(func, te_fainted, *args):
     ###  be duplicated. This is important for Whale.
     if te_fainted == False:
         apet.override_ability = False
+
+    temp_targets = []
+    temp_possible = []
     if len(args) == 5:
         te_idx = [0,args[4][1]+len(targets)]
         ### Run function again
-        temp_targets,temp_possible = func(
+        temp_result = func(
             args[0], args[1], args[2], args[3], te_idx)
+        if len(temp_result) == 2:
+            temp_targets,temp_possible = temp_result
     else:
-        temp_targets,temp_possible = func(*args)
+        temp_result = func(*args)
+        if len(temp_result) == 2:
+            temp_targets,temp_possible = temp_result
     
     return [targets]+[temp_targets],[possible]+[temp_possible]
     
