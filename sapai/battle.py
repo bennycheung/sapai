@@ -753,29 +753,33 @@ def battle_phase_knockout(battle_obj,
             fteam,oteam = get_teams([team_idx,0],teams)
             current_length = 0
             while True:
-                pet_idx = fteam.index(apet)
-                activated,targets,possible = apet.knockout_trigger(oteam)
-                append_phase_list(phase_list, apet, team_idx, pet_idx,
+                try:
+                    pet_idx = fteam.index(apet)
+                    activated,targets,possible = apet.knockout_trigger(oteam)
+                    append_phase_list(phase_list, apet, team_idx, pet_idx,
                                     activated,targets,possible)
                 
-                if activated == False:
-                    ### Easy breaking condition
-                    break
+                    if activated == False:
+                        ### Easy breaking condition
+                        break
                 
-                battle_phase(battle_obj,
-                            "phase_hurt_and_faint_k",
-                            teams,
-                            pet_priority,
-                            phase_dict)
-                
-                if len(phase_dict["phase_hurt_and_faint_k"]) == current_length:
-                    ### No more recursion needed because nothing else fainted
-                    break
-                else:
-                    ### Otherwise, something has been knockedout by Rhino 
-                    ### ability and while loop should iterate again
-                    current_length = len(phase_dict["phase_hurt_and_faint_k"])
+                    battle_phase(battle_obj,
+                                "phase_hurt_and_faint_k",
+                                teams,
+                                pet_priority,
+                                phase_dict)
                     
+                    if len(phase_dict["phase_hurt_and_faint_k"]) == current_length:
+                        ### No more recursion needed because nothing else fainted
+                        break
+                    else:
+                        ### Otherwise, something has been knockedout by Rhino 
+                        ### ability and while loop should iterate again
+                        current_length = len(phase_dict["phase_hurt_and_faint_k"])
+                except Exception as e:
+                    # FIXED this knockout logic problem
+                    print(f">>> battle phase knockout exception {e}")
+                    break
     return phase_dict
     
 

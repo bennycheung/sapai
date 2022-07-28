@@ -1179,7 +1179,7 @@ data = {
       },
       "tier": 1,
       "baseAttack": 2,
-      "baseHealth": 3,
+      "baseHealth": 2,
       "packs": [
         "StandardPack",
         "ExpansionPack1"

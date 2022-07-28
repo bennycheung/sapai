@@ -19,7 +19,7 @@ def storeaction(func):
             for entry in targets:
                 if getattr(entry, "state", False):
                     store_targets.append(entry.state)
-        player.action_history.append((action_name, store_targets))
+        player.action_history.append((player.turn, action_name, store_targets))
         
     ### Make sure that the func returned as the same name as input func
     store_action.__name__ = func.__name__
@@ -521,6 +521,9 @@ class Player():
         """ End turn and move to battle phase """
         ### Activate eot trigger
         for slot in self.team:
+            pet = slot._pet
+            if pet.name == 'pet-shark' and pet.attack == 6 and pet.health == 1:
+                print(f">>> PROBLEM: {pet} FOUND IN PLAYER")
             slot._pet.eot_trigger()
         return None
         
