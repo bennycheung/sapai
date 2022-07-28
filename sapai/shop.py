@@ -727,30 +727,6 @@ class ShopSlot():
                 self.roll_levelup()
             
     
-    # def __repr__(self):
-    #     if self.frozen:
-    #         fstr = "frozen"
-    #     else:
-    #         fstr = "not-frozen"
-    #     if self.slot_type == "pet":
-    #         if self.item.name == "pet-none":
-    #             return "< ShopSlot-{} {} EMPTY >".format(
-    #                 self.slot_type, fstr)
-    #         else:
-    #             pet_repr = str(self.item)
-    #             pet_repr = pet_repr[2:-2]
-    #             return "< ShopSlot-{} {} {}-gold {} >".format(
-    #                 self.slot_type, fstr, self.cost, pet_repr)
-    #     else:
-    #         if self.item.name == "food-none":
-    #             return "< ShopSlot-{} {} EMPTY >".format(
-    #                 self.slot_type, fstr)
-    #         else:
-    #             food_repr = str(self.item)
-    #             food_repr = food_repr[2:-2]
-    #             return "< ShopSlot-{} {} {}-gold {} >".format(
-    #                 self.slot_type, fstr, self.cost, food_repr)
-    
     def __repr__(self):
         if self.frozen:
             fstr = "F"
