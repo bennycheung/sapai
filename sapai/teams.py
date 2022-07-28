@@ -305,7 +305,6 @@ class Team():
     def __repr__(self):
         repr_str = ""
         for iter_idx,slot in enumerate(self.team):
-            # repr_str += "{}: {} \n    ".format(iter_idx, slot)
             repr_str += "{} ".format(slot)
         return repr_str
     
@@ -381,11 +380,9 @@ class TeamSlot():
     
     def __repr__(self):
         if self._pet.name == "pet-none":
-            # return "< Slot EMPTY >"
             return "[---------]"
         else:
             pet_repr = str(self._pet)
-            # pet_repr = pet_repr[2:-2]
             return "{}".format(pet_repr)
 
     

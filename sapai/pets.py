@@ -798,13 +798,6 @@ class Pet():
             status_img, 
             self.level, self.experience)
 
-    # def __repr__(self):
-    #     return "<{} {} {}-{} {} {}-{}>".format(
-    #         self.image_code, self.name,
-    #         self.attack, self.health,
-    #         self.status, 
-    #         self.level, self.experience)
-
 
     def copy(self):
         copy_pet = Pet(self.name, self.shop,seed_state=self.seed_state)
