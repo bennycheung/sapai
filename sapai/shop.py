@@ -453,7 +453,9 @@ class Shop():
     def __repr__(self):
         repr_str = ""
         for iter_idx,slot in enumerate(self.shop_slots):
-            repr_str += "{}: {} \n    ".format(iter_idx, slot)
+            if iter_idx != 0 and iter_idx % 5 == 0:
+                repr_str += "\n"
+            repr_str += "{}:{} ".format(iter_idx, slot)
         return repr_str
 
 
@@ -725,30 +727,54 @@ class ShopSlot():
                 self.roll_levelup()
             
     
+    # def __repr__(self):
+    #     if self.frozen:
+    #         fstr = "frozen"
+    #     else:
+    #         fstr = "not-frozen"
+    #     if self.slot_type == "pet":
+    #         if self.item.name == "pet-none":
+    #             return "< ShopSlot-{} {} EMPTY >".format(
+    #                 self.slot_type, fstr)
+    #         else:
+    #             pet_repr = str(self.item)
+    #             pet_repr = pet_repr[2:-2]
+    #             return "< ShopSlot-{} {} {}-gold {} >".format(
+    #                 self.slot_type, fstr, self.cost, pet_repr)
+    #     else:
+    #         if self.item.name == "food-none":
+    #             return "< ShopSlot-{} {} EMPTY >".format(
+    #                 self.slot_type, fstr)
+    #         else:
+    #             food_repr = str(self.item)
+    #             food_repr = food_repr[2:-2]
+    #             return "< ShopSlot-{} {} {}-gold {} >".format(
+    #                 self.slot_type, fstr, self.cost, food_repr)
+    
     def __repr__(self):
         if self.frozen:
-            fstr = "frozen"
+            fstr = "F"
         else:
-            fstr = "not-frozen"
+            fstr = "-"
         if self.slot_type == "pet":
             if self.item.name == "pet-none":
-                return "< ShopSlot-{} {} EMPTY >".format(
+                return "[{}/{}/[--------]]".format(
                     self.slot_type, fstr)
             else:
                 pet_repr = str(self.item)
-                pet_repr = pet_repr[2:-2]
-                return "< ShopSlot-{} {} {}-gold {} >".format(
+                # pet_repr = pet_repr[2:-2]
+                return "[{}/{}/{}G/{}]".format(
                     self.slot_type, fstr, self.cost, pet_repr)
         else:
             if self.item.name == "food-none":
-                return "< ShopSlot-{} {} EMPTY >".format(
+                return "[{}/{}/[--------]]".format(
                     self.slot_type, fstr)
             else:
                 food_repr = str(self.item)
-                food_repr = food_repr[2:-2]
-                return "< ShopSlot-{} {} {}-gold {} >".format(
+                # food_repr = food_repr[2:-2]
+                return "[{}/{}/{}G/{}]".format(
                     self.slot_type, fstr, self.cost, food_repr)
-    
+
     def freeze(self):
         """
         Freeze current slot such that shop rolls don't update the ShopSlot

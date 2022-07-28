@@ -45,6 +45,8 @@ class Food():
         self.name = name
         if name not in data["foods"]:
             raise Exception("Food {} not found".format(name))
+
+        self.image_code = data["foods"][name]["image"]["unicodeCodePoint"]
         
         self.cost = 3
         item = data["foods"][name]
@@ -120,9 +122,19 @@ class Food():
         return food
     
         
+    # def __repr__(self):
+    #     return "< {} {}-{} {} >".format(
+    #         self.name, self.attack, self.health, self.status)
+
     def __repr__(self):
-        return "< {} {}-{} {} >".format(
-            self.name, self.attack, self.health, self.status)
+        status = data["statuses"].get(self.status, None)
+        if status:
+            status_img = status["image"]["unicodeCodePoint"]
+        else:
+            status_img = "-"
+        return "{}{}:{}{}]".format(
+            self.image_code,
+            self.attack, self.health, status_img)
 
         
 # %%

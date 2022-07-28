@@ -787,11 +787,23 @@ class Pet():
 
         
     def __repr__(self):
-        return "< {} {} {}-{} {} {}-{} >".format(
-            self.image_code, self.name,
+        status = data["statuses"].get(self.status, None)
+        if status:
+            status_img = status["image"]["unicodeCodePoint"]
+        else:
+            status_img = "-"
+        return "[{}{}:{}{}{}:{}]".format(
+            self.image_code,
             self.attack, self.health,
-            self.status, 
+            status_img, 
             self.level, self.experience)
+
+    # def __repr__(self):
+    #     return "<{} {} {}-{} {} {}-{}>".format(
+    #         self.image_code, self.name,
+    #         self.attack, self.health,
+    #         self.status, 
+    #         self.level, self.experience)
 
 
     def copy(self):
